@@ -1,6 +1,8 @@
 package folksent.model;
 
-public class FolksonomyEdge<TSource extends FolksonomyBaseModel, TTarget extends FolksonomyBaseModel> {
+import folksent.model.entity.FolksonomyEntity;
+
+public class FolksonomyEdge<TSource extends FolksonomyEntity, TTarget extends FolksonomyEntity> {
 
 	public TSource getSource() {
 		return source_;
@@ -12,7 +14,7 @@ public class FolksonomyEdge<TSource extends FolksonomyBaseModel, TTarget extends
 
 	@Override
 	public String toString() {
-		return source_.getName() + 0x1e + target_.getName();
+		return source_.getEntityName() + 0x1e + target_.getEntityName();
 	}
 
 	@Override
