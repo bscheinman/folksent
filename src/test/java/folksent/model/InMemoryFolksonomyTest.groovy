@@ -16,7 +16,7 @@ class InMemoryFolksonomyTest {
     class BaseDocument implements Document {
 
         def name
-        def author = ''
+        def author = null
         def topics = [] as Set
 
         @Override
@@ -34,7 +34,7 @@ class InMemoryFolksonomyTest {
 
         @Override
         BaseAuthor extractAuthor(BaseDocument document) {
-            new BaseAuthor(document.author)
+            document.author
         }
 
         @Override
