@@ -6,6 +6,11 @@ public class BaseAuthor implements Author {
 		return name_;
 	}
 
+	@Override
+	public boolean equals(Object other) {
+		return other != null && other instanceof Author && ((Author) other).getEntityName().equals(getEntityName());
+	}
+
 	public BaseAuthor(String name) {
 		if (name == null || name.isEmpty()) {
 			throw new IllegalArgumentException("Author name cannot be null or empty");

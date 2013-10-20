@@ -17,6 +17,11 @@ public class InMemoryFolksonomy<TDocument extends Document, TAuthor extends Auth
 	}
 
 
+	public TAuthor getAuthor(TDocument document) {
+		return documentExtractor_.extractAuthor(document);
+	}
+
+
 	public Set<TDocument> getDocuments(TAuthor author) {
 		return documentsByAuthor_.get(author);
 	}
@@ -33,7 +38,7 @@ public class InMemoryFolksonomy<TDocument extends Document, TAuthor extends Auth
 
 
 	public Set<TTopic> getTopics() {
-		Set<TTopic> topics = new HashSet<TTopic>();
+		Set<TTopic> topics = new HashSet<>();
 		for (Set<TTopic> topicSet : topicsByDocument_.values()) {
 			for (TTopic topic : topicSet) {
 				topics.add(topic);
@@ -53,7 +58,7 @@ public class InMemoryFolksonomy<TDocument extends Document, TAuthor extends Auth
             TAuthor author = documentExtractor_.extractAuthor(document);
             addAuthorDocument_(author, document);
 
-			Set<TTopic> documentTopics = new HashSet<TTopic>();
+			Set<TTopic> documentTopics = new HashSet<>();
             topicsByDocument_.put(document, documentTopics);
 
 			for (TTopic topic : documentExtractor_.extractTopics(document)) {
@@ -81,16 +86,16 @@ public class InMemoryFolksonomy<TDocument extends Document, TAuthor extends Auth
 
 	public InMemoryFolksonomy(DocumentInformationExtractor<TDocument, TAuthor, TTopic> extractor) {
 		documentExtractor_ = extractor;
-		topicsByDocument_ = new HashMap<TDocument, Set<TTopic>>();
-		documentsByAuthor_ = new HashMap<TAuthor, Set<TDocument>>();
+		topicsByDocument_ = new HashMap<>();
+		documentsByAuthor_ = new HashMap<>();
 	}
 
 
-	public InMemoryFolksonomy(InMemoryFolksonomy<TDocument, TAuthor, TTopic> other) {
-		this(other.documentExtractor_);
-		topicsByDocument_.putAll(other.topicsByDocument_);
-		documentsByAuthor_.putAll(other.documentsByAuthor_);
+	public InMemoryFolksonomy(Folksonomy<TDocument, TAuthor, TTopic> other) throws FolksonomyException {
+		this(new FolksonomyUtils.CopyDocumentInformationExtractor<>(other));
+		FolksonomyUtils.copyFolksonomy(other, this);
 	}
+
 
 	private DocumentInformationExtractor<TDocument, TAuthor, TTopic> documentExtractor_;
 	private Map<TDocument, Set<TTopic>> topicsByDocument_;
@@ -100,7 +105,7 @@ public class InMemoryFolksonomy<TDocument extends Document, TAuthor extends Auth
     protected void addAuthorDocument_(TAuthor author, TDocument document) {
         Set<TDocument> authorDocuments = documentsByAuthor_.get(author);
         if (authorDocuments == null) {
-            authorDocuments = new HashSet<TDocument>();
+            authorDocuments = new HashSet<>();
             documentsByAuthor_.put(author, authorDocuments);
         }
         authorDocuments.add(document);
@@ -114,7 +119,7 @@ public class InMemoryFolksonomy<TDocument extends Document, TAuthor extends Auth
     protected void addDocumentTopic_(TDocument document, TTopic topic) {
         Set<TTopic> documentTopics = topicsByDocument_.get(document);
         if (documentTopics == null) {
-            documentTopics = new HashSet<TTopic>();
+            documentTopics = new HashSet<>();
             topicsByDocument_.put(document, documentTopics);
         }
         documentTopics.add(topic);

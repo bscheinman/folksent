@@ -6,6 +6,11 @@ public class BaseTopic implements Topic {
 		return name_;
 	}
 
+	@Override
+	public boolean equals(Object other) {
+		return other != null && other instanceof Topic && ((Topic) other).getEntityName().equals(getEntityName());
+	}
+
 	public BaseTopic(String name) {
 		if (name == null || name.isEmpty()) {
 			throw new IllegalArgumentException("Topic name cannot be null or empty");

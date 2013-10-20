@@ -25,7 +25,7 @@ class InMemoryFolksonomyTest {
         }
 
         public BaseDocument(name) {
-            name = name
+            this.name = name
         }
 
     }
@@ -34,11 +34,11 @@ class InMemoryFolksonomyTest {
 
         @Override
         BaseAuthor extractAuthor(BaseDocument document) {
-            document.author
+            new BaseAuthor(document.author)
         }
 
         @Override
-        Set<BaseTopic> extractTopics(BaseDocument document) {
+        Collection<BaseTopic> extractTopics(BaseDocument document) {
             document.topics
         }
     }
@@ -108,7 +108,7 @@ class InMemoryFolksonomyTest {
     }
 
     @Test void testAsGraph() {
-        def graph = FolksonomyGraph.asGraph(folksonomy)
+        def graph = FolksonomyUtils.asGraph(folksonomy)
 
         for (entity in [doc1, doc2, author1, author2, topic1, topic2, topic3]) {
             assertTrue graph.containsVertex(entity)

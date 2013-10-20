@@ -12,6 +12,7 @@ public interface Folksonomy<TDocument extends Document, TAuthor extends Author, 
 	public Collection<TDocument> getDocuments();
 	public Collection<TTopic> getTopics();
 
+	public TAuthor getAuthor(TDocument document);
 	public Collection<TDocument> getDocuments(TAuthor author);
 	public Collection<TTopic> getTopics(TDocument document);
 

@@ -15,12 +15,12 @@ public class InMemoryAugmentedFolksonomy<TDocument extends Document, TAuthor ext
 
 
 	public Double getDocumentSentiment(TDocument document, TTopic topic) {
-		return documentSentiments_.get(new FolksonomyEdge<TDocument, TTopic>(document, topic));
+		return documentSentiments_.get(new FolksonomyEdge<>(document, topic));
 	}
 
 	public Double getAuthorSentiment(TAuthor author, TTopic topic) {
 		ensureAuthorClean_(author);
-		return authorSentiments_.get(new FolksonomyEdge<TAuthor, TTopic>(author, topic));
+		return authorSentiments_.get(new FolksonomyEdge<>(author, topic));
 	}
 
 
@@ -29,18 +29,17 @@ public class InMemoryAugmentedFolksonomy<TDocument extends Document, TAuthor ext
 			SentimentExtractor<TDocument, TAuthor, TTopic> sentimentExtractor) {
 		super(documentExtractor);
 		sentimentExtractor_ = sentimentExtractor;
-		documentSentiments_ = new HashMap<FolksonomyEdge<TDocument, TTopic>, Double>();
-		authorSentiments_ = new HashMap<FolksonomyEdge<TAuthor, TTopic>, Double>();
-		dirtyAuthors_ = new HashSet<TAuthor>();
+		documentSentiments_ = new HashMap<>();
+		authorSentiments_ = new HashMap<>();
+		dirtyAuthors_ = new HashSet<>();
 	}
 
 
-	public InMemoryAugmentedFolksonomy(InMemoryAugmentedFolksonomy<TDocument, TAuthor, TTopic> other) {
-		super(other);
-		sentimentExtractor_ = other.sentimentExtractor_;
-		documentSentiments_ = new HashMap<FolksonomyEdge<TDocument, TTopic>, Double>(other.documentSentiments_);
-		authorSentiments_ = new HashMap<FolksonomyEdge<TAuthor, TTopic>, Double>(other.authorSentiments_);
-		dirtyAuthors_ = new HashSet<TAuthor>();
+	public InMemoryAugmentedFolksonomy(AugmentedFolksonomy<TDocument, TAuthor, TTopic> other) throws FolksonomyException {
+		super(new FolksonomyUtils.CopyDocumentInformationExtractor<>(other));
+		sentimentExtractor_ = new FolksonomyUtils.CopySentimentExtractor<>(other);
+		dirtyAuthors_ = new HashSet<>();
+		FolksonomyUtils.copyFolksonomy(other, this);
 	}
 
     private SentimentExtractor<TDocument, TAuthor, TTopic> sentimentExtractor_;
@@ -64,14 +63,14 @@ public class InMemoryAugmentedFolksonomy<TDocument extends Document, TAuthor ext
 	@Override
 	protected void addDocumentTopic_(TDocument document, TTopic topic) {
 		super.addDocumentTopic_(document, topic);
-		documentSentiments_.put(new FolksonomyEdge<TDocument, TTopic>(document, topic),
+		documentSentiments_.put(new FolksonomyEdge<>(document, topic),
 				sentimentExtractor_.getDocumentSentiment(this, document, topic));
 	}
 
 
 	private void calculateAuthorSentiment_(TAuthor author, TTopic topic) {
 		Double sentiment = sentimentExtractor_.getAuthorSentiment(this, author, topic);
-		FolksonomyEdge<TAuthor, TTopic> edge = new FolksonomyEdge<TAuthor, TTopic>(author, topic);
+		FolksonomyEdge<TAuthor, TTopic> edge = new FolksonomyEdge<>(author, topic);
 		if (sentiment != null) {
 			authorSentiments_.put(edge, sentiment);
 		} else {

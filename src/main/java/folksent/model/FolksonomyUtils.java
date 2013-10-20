@@ -10,12 +10,9 @@ import org.jgrapht.WeightedGraph;
 import org.jgrapht.graph.AsWeightedGraph;
 import org.jgrapht.graph.SimpleGraph;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
-public class FolksonomyGraph {
+public class FolksonomyUtils {
 
 	public static <TDocument extends Document, TAuthor extends Author, TTopic extends Topic>
 			Graph<FolksonomyEntity, String> asGraph(Folksonomy<TDocument, TAuthor, TTopic> folksonomy) {
@@ -72,9 +69,67 @@ public class FolksonomyGraph {
 
 	private static class FolksonomyEdgeFactory implements EdgeFactory<FolksonomyEntity, String> {
 
+		public char FIELD_SEPARATOR = 0x1e;
+
 		@Override
 		public String createEdge(FolksonomyEntity source, FolksonomyEntity target) {
-			return source.getEntityName() + 0x1e + target.getEntityName();
+			return String.format("%s%s%s", source.getEntityName(), FIELD_SEPARATOR, target.getEntityName());
+		}
+
+	}
+
+
+	public static class CopyDocumentInformationExtractor<TDocument extends Document, TAuthor extends Author, TTopic extends Topic>
+			implements DocumentInformationExtractor<TDocument, TAuthor, TTopic> {
+
+		@Override
+		public TAuthor extractAuthor(TDocument document) {
+			return original_.getAuthor(document);
+		}
+
+		@Override
+		public Collection<TTopic> extractTopics(TDocument document) {
+			return original_.getTopics(document);
+		}
+
+		public CopyDocumentInformationExtractor(Folksonomy<TDocument, TAuthor, TTopic> folksonomy) {
+			original_ = folksonomy;
+		}
+
+		private Folksonomy<TDocument, TAuthor, TTopic> original_;
+
+	}
+
+
+	public static class CopySentimentExtractor<TDocument extends Document, TAuthor extends Author, TTopic extends Topic>
+			implements SentimentExtractor<TDocument, TAuthor, TTopic> {
+
+		@Override
+		public Double getDocumentSentiment(Folksonomy<TDocument, TAuthor, TTopic> folksonomy, TDocument document, TTopic topic) {
+			return original_.getDocumentSentiment(document, topic);
+		}
+
+		@Override
+		public Double getAuthorSentiment(Folksonomy<TDocument, TAuthor, TTopic> folksonomy, TAuthor author, TTopic topic) {
+			return original_.getAuthorSentiment(author, topic);
+		}
+
+
+		public CopySentimentExtractor(AugmentedFolksonomy<TDocument, TAuthor, TTopic> folksonomy) {
+			original_ = folksonomy;
+		}
+
+		private AugmentedFolksonomy<TDocument, TAuthor, TTopic> original_;
+	}
+
+
+	public static <TDocument extends Document, TAuthor extends Author, TTopic extends Topic>
+			void copyFolksonomy(Folksonomy< ? extends TDocument, ? extends TAuthor, ? extends TTopic> from,
+			                    Folksonomy<? super TDocument, ? super TAuthor, ? super TTopic> to)
+			throws FolksonomyException {
+
+		for (TDocument document : from.getDocuments()) {
+			to.addDocument(document);
 		}
 
 	}

@@ -1,4 +1,4 @@
-package folksent.storage;
+package folksent.twitfolk;
 
 import com.mongodb.DBObject;
 import folksent.model.entity.Document;
@@ -6,7 +6,7 @@ import folksent.model.entity.Document;
 public class MongoDocument implements Document {
 
 	public String getEntityName() {
-		return ((String) document_.get(NAME_KEY_));
+		return document_.get(NAME_KEY_).toString();
 	}
 
 	public DBObject getMongoObject() {
