@@ -2,9 +2,7 @@ package folksent.model;
 
 import folksent.model.entity.Author;
 import folksent.model.entity.Document;
-import folksent.model.entity.FolksonomyEntity;
 import folksent.model.entity.Topic;
-import org.jgrapht.graph.SimpleGraph;
 
 import java.util.Collection;
 
@@ -19,7 +17,5 @@ public interface Folksonomy<TDocument extends Document, TAuthor extends Author, 
 
 	public void addDocument(TDocument document) throws FolksonomyException;
 	public void removeDocument(TDocument document);
-
-	public SimpleGraph<FolksonomyEntity, String> asGraph();
 
 }

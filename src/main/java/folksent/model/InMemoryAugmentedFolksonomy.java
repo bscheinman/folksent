@@ -2,17 +2,15 @@ package folksent.model;
 
 import folksent.model.entity.Author;
 import folksent.model.entity.Document;
-import folksent.model.entity.FolksonomyEntity;
 import folksent.model.entity.Topic;
-import org.jgrapht.graph.SimpleWeightedGraph;
 
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-public class BaseAugmentedFolksonomy<TDocument extends Document, TAuthor extends Author, TTopic extends Topic>
-        extends BaseFolksonomy<TDocument, TAuthor, TTopic>
+public class InMemoryAugmentedFolksonomy<TDocument extends Document, TAuthor extends Author, TTopic extends Topic>
+        extends InMemoryFolksonomy<TDocument, TAuthor, TTopic>
 		implements AugmentedFolksonomy<TDocument, TAuthor, TTopic> {
 
 
@@ -25,33 +23,8 @@ public class BaseAugmentedFolksonomy<TDocument extends Document, TAuthor extends
 		return authorSentiments_.get(new FolksonomyEdge<TAuthor, TTopic>(author, topic));
 	}
 
-    @Override
-    public SimpleWeightedGraph<FolksonomyEntity, String> asGraph() {
-        SimpleWeightedGraph<FolksonomyEntity, String> graph =
-		        new SimpleWeightedGraph<FolksonomyEntity, String>(new FolksonomyEdgeFactory());
-        super.populateGraph_(graph);
 
-	    FolksonomyEdgeFactory edgeFactory = new FolksonomyEdgeFactory();
-		for (Map.Entry<FolksonomyEdge<TDocument, TTopic>, Double> entry : documentSentiments_.entrySet()) {
-			graph.setEdgeWeight(
-					edgeFactory.createEdge(entry.getKey().getSource(),
-					                       entry.getKey().getTarget()),
-					entry.getValue());
-		}
-
-	    calculateAuthorSentiments_();
-	    for (Map.Entry<FolksonomyEdge<TAuthor, TTopic>, Double> entry : authorSentiments_.entrySet()) {
-		    graph.setEdgeWeight(
-				    edgeFactory.createEdge(entry.getKey().getSource(),
-					                       entry.getKey().getTarget()),
-				    entry.getValue());
-	    }
-
-        return graph;
-    }
-
-
-	public BaseAugmentedFolksonomy(
+	public InMemoryAugmentedFolksonomy(
 			DocumentInformationExtractor<TDocument, TAuthor, TTopic> documentExtractor,
 			SentimentExtractor<TDocument, TAuthor, TTopic> sentimentExtractor) {
 		super(documentExtractor);
@@ -62,7 +35,7 @@ public class BaseAugmentedFolksonomy<TDocument extends Document, TAuthor extends
 	}
 
 
-	public BaseAugmentedFolksonomy(BaseAugmentedFolksonomy<TDocument, TAuthor, TTopic> other) {
+	public InMemoryAugmentedFolksonomy(InMemoryAugmentedFolksonomy<TDocument, TAuthor, TTopic> other) {
 		super(other);
 		sentimentExtractor_ = other.sentimentExtractor_;
 		documentSentiments_ = new HashMap<FolksonomyEdge<TDocument, TTopic>, Double>(other.documentSentiments_);

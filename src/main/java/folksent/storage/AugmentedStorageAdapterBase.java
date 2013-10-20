@@ -9,18 +9,18 @@ public abstract class AugmentedStorageAdapterBase<TDocument extends Document, TA
 		extends StorageAdapterBase<TDocument, TAuthor, TTopic, TQuery> implements AugmentedStorageAdapter<TDocument, TAuthor, TTopic, TQuery> {
 
 	@Override
-	public void storeFolksonomy(BaseAugmentedFolksonomy<TDocument, TAuthor, TTopic> folksonomy) {
+	public void storeFolksonomy(AugmentedFolksonomy<TDocument, TAuthor, TTopic> folksonomy) {
 		// TODO
 	}
 
 	@Override
-	public void storeFolksonomy(BaseFolksonomy<TDocument, TAuthor, TTopic> folksonomy) {
+	public void storeFolksonomy(Folksonomy<TDocument, TAuthor, TTopic> folksonomy) {
 		// TODO
 	}
 
 	@Override
-	public BaseAugmentedFolksonomy<TDocument, TAuthor, TTopic> loadFolksonomy(TQuery query) throws FolksonomyException{
-		BaseAugmentedFolksonomy<TDocument, TAuthor, TTopic> folksonomy = new BaseAugmentedFolksonomy<TDocument, TAuthor, TTopic>(
+	public AugmentedFolksonomy<TDocument, TAuthor, TTopic> loadFolksonomy(TQuery query) throws FolksonomyException {
+		AugmentedFolksonomy<TDocument, TAuthor, TTopic> folksonomy = new InMemoryAugmentedFolksonomy<>(
 				getDocumentExtractor_(),
 				getSentimentExtractor_()
 		);
