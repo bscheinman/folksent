@@ -1,7 +1,6 @@
 package org.caseinsensitive.folksent.model.mongo
 
-import org.caseinsensitive.folksent.model.Folksonomy
-import org.caseinsensitive.folksent.model.entity.{BaseAuthor, Author, Document}
+import org.caseinsensitive.folksent.model.{BaseAuthor, Author, Folksonomy}
 import com.mongodb.casbah.MongoDB
 import com.mongodb.casbah.commons.MongoDBObject
 import com.mongodb.DBObject

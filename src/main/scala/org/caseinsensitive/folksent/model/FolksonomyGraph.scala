@@ -1,6 +1,5 @@
 package org.caseinsensitive.folksent.model
 
-import org.caseinsensitive.folksent.model.entity.{Entity, Document}
 import org.jgrapht.{WeightedGraph, Graph}
 
 object FolksonomyGraph {

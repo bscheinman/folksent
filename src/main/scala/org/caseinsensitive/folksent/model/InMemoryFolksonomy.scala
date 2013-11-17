@@ -1,6 +1,5 @@
 package org.caseinsensitive.folksent.model
 
-import org.caseinsensitive.folksent.model.entity.{Topic, Entity, Author}
 import scala.collection.mutable
 
 class InMemoryFolksonomy[T](val authorExtractor: T => Author, val topicExtractor: T => Seq[Topic]) extends Folksonomy[T] {

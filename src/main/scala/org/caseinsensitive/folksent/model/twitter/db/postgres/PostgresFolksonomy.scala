@@ -1,7 +1,6 @@
 package org.caseinsensitive.folksent.model.db.postgres
 
-import org.caseinsensitive.folksent.model.Folksonomy
-import org.caseinsensitive.folksent.model.entity.{Topic, Author}
+import org.caseinsensitive.folksent.model.{Topic, Author, Folksonomy}
 import org.caseinsensitive.folksent.model.twitter.{TwitterReference, FullTweet}
 
 class PostgresFolksonomy extends Folksonomy[FullTweet] {

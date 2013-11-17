@@ -1,6 +1,6 @@
 package org.caseinsensitive.folksent.model.twitter
 
-import org.caseinsensitive.folksent.model.entity.{Topic, BaseAuthor, Author, Document}
+import org.caseinsensitive.folksent.model.{Topic, Document, BaseAuthor, Author}
 
 trait Tweet extends Document {
   val id: Long

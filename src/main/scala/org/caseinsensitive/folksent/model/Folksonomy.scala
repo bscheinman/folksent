@@ -1,6 +1,5 @@
 package org.caseinsensitive.folksent.model
 
-import org.caseinsensitive.folksent.model.entity.{Topic, Author, Document}
 
 trait Folksonomy[T <: Document] {
 
