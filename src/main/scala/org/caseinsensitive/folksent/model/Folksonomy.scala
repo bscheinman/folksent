@@ -5,12 +5,12 @@ trait Folksonomy[T <: Document] {
 
   def authors(): Seq[Author]
   def documents(): Seq[T]
-  def topics[TTopic <: Topic](): Set[TTopic]
+  def topics(): Seq[Topic] // immutable.Set is annoyingly not covariant
 
   def author(document: T): Author
   def documents(author: Author): Seq[T]
   def documents(topic: Topic): Seq[T]
-  def topics[TTopic <: Topic](document: T): Set[TTopic]
+  def topics(document: T): Seq[Topic]
 
   def add(document: T): Unit
   def +=(document: T) = {

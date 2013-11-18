@@ -1,10 +1,10 @@
 package org.caseinsensitive.folksent.model.mongo
 
-import org.caseinsensitive.folksent.model.{BaseAuthor, Author, Folksonomy}
+import org.caseinsensitive.folksent.model.{Topic, BaseAuthor, Author, Folksonomy}
 import com.mongodb.casbah.MongoDB
 import com.mongodb.casbah.commons.MongoDBObject
 import com.mongodb.DBObject
-import org.caseinsensitive.folksent.model.twitter.{TwitterAuthor, Reference, Hashtag}
+import org.caseinsensitive.folksent.model.twitter.{TwitterReference, TwitterAuthor, Reference, Hashtag}
 
 class MongoFolksonomy(db: MongoDB) extends Folksonomy[MongoTweet] {
 
@@ -28,8 +28,8 @@ class MongoFolksonomy(db: MongoDB) extends Folksonomy[MongoTweet] {
     document.author
   }
 
-  def topics(document: MongoTweet): Set[Topic] = {
-    document.refs
+  def topics(document: MongoTweet): Seq[TwitterReference] = {
+    document.refs.toSeq
   }
 
   def _documentSearch(query: DBObject): Seq[MongoTweet] = {

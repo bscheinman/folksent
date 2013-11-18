@@ -9,11 +9,11 @@ class PostgresFolksonomy extends Folksonomy[FullTweet] {
 
   def documents(): Seq[FullTweet] = ???
 
-  def topics(): Set[TwitterReference] = ???
+  def topics(): Seq[TwitterReference] = ???
 
   def author(tweet: FullTweet): Author = tweet.author
 
-  def topics(tweet: FullTweet): Set[TwitterReference] = tweet.refs
+  def topics(tweet: FullTweet): Seq[TwitterReference] = tweet.refs.toSeq
 
   def documents(author: Author): Seq[FullTweet] = ???
 

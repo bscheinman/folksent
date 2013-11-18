@@ -2,7 +2,7 @@ package org.caseinsensitive.folksent.model
 
 import scala.collection.mutable
 
-class InMemoryFolksonomy[T](val authorExtractor: T => Author, val topicExtractor: T => Seq[Topic]) extends Folksonomy[T] {
+abstract class InMemoryFolksonomy[T <: Document] extends Folksonomy[T] {
 
   def authors(): Seq[Author] = {
     _authors.keySet.toSeq
@@ -12,8 +12,8 @@ class InMemoryFolksonomy[T](val authorExtractor: T => Author, val topicExtractor
     _documents.toSeq
   }
 
-  def topics(): Set[Topic] = {
-    _topics.keySet
+  def topics(): Seq[Topic] = {
+    _topics.keySet.toSeq
   }
 
   def documents(author: Author): Seq[T] = {
@@ -24,12 +24,14 @@ class InMemoryFolksonomy[T](val authorExtractor: T => Author, val topicExtractor
     _topics.getOrElse(topic, Set.empty[T]).toSeq
   }
 
+
   def add(document: T): Unit = {
     if (!_documents.add(document)) {
       return
     }
 
-    _authors(authorExtractor(document)).+=(document)
+    _authors(author(document)) += document
+    topics(document).foreach(topic => _topics(topic) += document)
   }
 
   // main document store
@@ -42,6 +44,6 @@ class InMemoryFolksonomy[T](val authorExtractor: T => Author, val topicExtractor
     }
   }
 
-  private val _authors = new DocumentReverseLookup[Author]
-  private val _topics  = new DocumentReverseLookup[Topic]
+  private val _authors = new DocumentReverseLookup[Author]()
+  private val _topics  = new DocumentReverseLookup[Topic]()
 }

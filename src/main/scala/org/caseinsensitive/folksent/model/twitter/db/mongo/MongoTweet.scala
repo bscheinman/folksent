@@ -1,17 +1,17 @@
 package org.caseinsensitive.folksent.model.mongo
 
-import com.mongodb.DBObject
 import org.caseinsensitive.folksent.model.twitter.{Hashtag, Reference, TwitterReference, FullTweet}
+import com.mongodb.DBObject
 
 case class MongoTweet(underlying: DBObject) extends FullTweet(
 
   underlying.get("tweet_id") match {
-    case n: Long => n
+    case n: java.lang.Long => n
     case _ => throw new IllegalArgumentException("tweet missing id")
   },
 
   underlying.get("user_id") match {
-    case n: Long => n
+    case n: java.lang.Long => n
     case _ => throw new IllegalArgumentException("tweet missing user id")
   },
 
