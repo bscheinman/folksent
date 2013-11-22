@@ -32,7 +32,7 @@ case class TwitterAuthor(id: Long, username: String) extends Author {
 }
 
 object TwitterEntities {
-  def createReference(ref_name: String): Topic = {
+  def createReference(ref_name: String): TwitterReference = {
     ref_name match {
       case s: String if s.startsWith("#") => Hashtag(s.substring(1))
       case s: String if s.startsWith("@") => Reference(s.substring(1))
