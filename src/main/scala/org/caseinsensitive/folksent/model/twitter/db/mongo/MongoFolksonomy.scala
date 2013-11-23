@@ -1,12 +1,15 @@
 package org.caseinsensitive.folksent.model.mongo
 
-import org.caseinsensitive.folksent.model.{Topic, BaseAuthor, Author, Folksonomy}
+import org.caseinsensitive.folksent.model._
 import com.mongodb.casbah.MongoDB
 import com.mongodb.casbah.commons.MongoDBObject
 import com.mongodb.DBObject
-import org.caseinsensitive.folksent.model.twitter.{TwitterReference, TwitterAuthor, Reference, Hashtag}
+import org.caseinsensitive.folksent.model.twitter.TwitterReference
+import org.caseinsensitive.folksent.model.twitter.Hashtag
+import org.caseinsensitive.folksent.model.BaseAuthor
+import org.caseinsensitive.folksent.model.twitter.Reference
 
-class MongoFolksonomy(db: MongoDB) extends Folksonomy[MongoTweet] {
+class MongoFolksonomy(implicit val db: MongoDB) extends FolksonomyReadable[MongoTweet] {
 
   def authors(): Seq[Author] = {
     db("user_counts").find(MongoDBObject(), MongoDBObject("_id" -> 1)).map(user => BaseAuthor(user.get("_id").asInstanceOf[String])).toSeq
@@ -19,7 +22,7 @@ class MongoFolksonomy(db: MongoDB) extends Folksonomy[MongoTweet] {
     if (sample > 0) {
       cursor = cursor.limit(sample)
     }
-    cursor.map(MongoTweet(_)).toSeq
+    cursor.map(MongoTweet).toSeq
   }
 
   def topics(): Seq[Topic] = ???
@@ -47,7 +50,5 @@ class MongoFolksonomy(db: MongoDB) extends Folksonomy[MongoTweet] {
       case _ => Nil
     }
   }
-
-  def add(document: MongoTweet): Unit = ???
 
 }

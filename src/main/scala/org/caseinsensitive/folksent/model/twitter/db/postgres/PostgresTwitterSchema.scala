@@ -1,17 +1,15 @@
 package org.caseinsensitive.folksent.model.twitter.db.postgres
 
 import scala.slick.driver.PostgresDriver.simple._
-import org.caseinsensitive.folksent.model.{Document, BaseAuthor, Author}
-import org.caseinsensitive.folksent.model.twitter.FullTweet
+import org.caseinsensitive.folksent.model.{Document, BaseAuthor}
+import org.caseinsensitive.folksent.model.twitter.{TwitterAuthor, FullTweet}
 
 
 case class PGTweet(id: Long, user_id: Long, text: String) extends Document {
   val name = id.toString
   lazy val author = BaseAuthor(user_id.toString)
-  lazy val user = (for {user <- Users} yield user).take(1).firstOption
-
   def this(tweet: FullTweet) = {
-    this(tweet.name.toLong, tweet.author.name.toLong, tweet.text)
+    this(tweet.id, tweet.author.id, tweet.text)
   }
 }
 object Tweets extends Table[PGTweet]("tweets") {
@@ -25,20 +23,17 @@ object Tweets extends Table[PGTweet]("tweets") {
 }
 
 
-case class User(user_id: Long, username: String) extends Author {
-  val name = user_id.toString
-}
-object Users extends Table[User]("users") {
+object Users extends Table[TwitterAuthor]("users") {
   def user_id = column[Long]("user_id", O.PrimaryKey)
   def username = column[String]("username", O.NotNull)
-  def * = user_id ~ username <> (User, User.unapply _)
+  def * = user_id ~ username <> (TwitterAuthor, TwitterAuthor.unapply _)
 
   def user_index = index("ix_user_name", (username), unique = true)
 }
 
 
 case class TweetReference(tweet_id: Long, ref_name: String, sentiment: Option[Double])
-object TweetReferences extends Table[TweetReference]("twitter_references") {
+object TweetReferences extends Table[TweetReference]("tweet_references") {
   def tweet_id = column[Long]("tweet_id", O.NotNull)
   def ref_name = column[String]("ref_name", O.NotNull)
   def sentiment = column[Double]("sentiment", O.Nullable)
@@ -64,12 +59,3 @@ object UserSentiments extends Table[UserSentiment]("user_sentiments") {
   def unique_constraint = index("uq_user_sentiment", (user_id, ref_name), unique = true)
 }
 
-
-object TwitterSchema {
-
-  def populate(): Unit = {
-    Database.forURL("").
-    (Tweets.ddl ++ Users.ddl ++ TweetReferences.ddl ++ UserSentiments.ddl).create
-  }
-
-}

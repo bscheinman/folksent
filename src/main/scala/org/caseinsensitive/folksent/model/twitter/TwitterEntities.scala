@@ -1,6 +1,6 @@
 package org.caseinsensitive.folksent.model.twitter
 
-import org.caseinsensitive.folksent.model.{Topic, Document, BaseAuthor, Author}
+import org.caseinsensitive.folksent.model.{Topic, Document, Author}
 
 trait Tweet extends Document {
   val id: Long
@@ -8,12 +8,7 @@ trait Tweet extends Document {
   val name = id.toString
 }
 
-class FullTweet(val id: Long, val user_id: Long, val text: String, val refs: Set[TwitterReference]) extends Tweet {
-  val author: Author = BaseAuthor(user_id.toString)
-  def unapply(): Option[(Long, Long, String, Set[TwitterReference])] = {
-    Some(id, user_id, text, refs)
-  }
-}
+class FullTweet(val id: Long, val author: TwitterAuthor, val text: String, val refs: Set[TwitterReference]) extends Tweet
 
 
 abstract class TwitterReference extends Topic
