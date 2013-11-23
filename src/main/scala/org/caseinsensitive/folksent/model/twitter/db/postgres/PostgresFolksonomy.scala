@@ -3,6 +3,7 @@ package org.caseinsensitive.folksent.model.db.postgres
 import org.caseinsensitive.folksent.model._
 import org.caseinsensitive.folksent.model.twitter.{TwitterEntities, TwitterReference, FullTweet}
 import org.caseinsensitive.folksent.model.twitter.db.postgres._
+import org.caseinsensitive.folksent.model.twitter.db.postgres.PostgresTwitterImplicits._
 import scala.slick.driver.PostgresDriver.simple._
 import org.caseinsensitive.folksent.model.twitter.db.postgres.PGTweet
 
@@ -50,11 +51,10 @@ class PostgresFolksonomy(implicit val session: Session) extends FolksonomyReadab
     }
   }
 
-  private def _addImpl(document: FullTweet): Unit = {
-    val tweet = new PGTweet(document)
+  private def _addImpl(tweet: FullTweet): Unit = {
 
     (for { user <- Users if user.user_id === tweet.user_id } yield user).take(1).firstOption match {
-      case None => Users.insert(document.author)
+      case None => Users.insert(tweet.author)
       case Some(_) => Unit
     }
 
@@ -62,7 +62,7 @@ class PostgresFolksonomy(implicit val session: Session) extends FolksonomyReadab
     (for { dbTweet <- Tweets if dbTweet.tweet_id === tweet.id } yield dbTweet).take(1).firstOption match {
       case None => {
         Tweets.insert(tweet)
-        document.refs.foreach(ref =>
+        tweet.refs.foreach(ref =>
           TweetReferences.insert(TweetReference(tweet.id, ref.name, None))
         )
       }

@@ -1,35 +1,28 @@
 package org.caseinsensitive.folksent.model.mongo
 
 import org.caseinsensitive.folksent.model.twitter._
+import com.mongodb.casbah.commons.MongoDBList
+import com.mongodb.casbah.commons.Implicits.wrapDBObj
 import com.mongodb.DBObject
-import org.caseinsensitive.folksent.model.twitter.Reference
-import org.caseinsensitive.folksent.model.twitter.Hashtag
+import java.util.Date
+import org.joda.time.DateTime
 
-case class MongoTweet(underlying: DBObject) extends FullTweet(
 
-  underlying.get("tweet_id") match {
-    case n: java.lang.Long => n
-    case _ => throw new IllegalArgumentException("tweet missing id")
-  },
+class MongoTweet(underlying: DBObject) extends FullTweet(
 
-  (underlying.get("user_id"), underlying.get("username")) match {
-    case (user_id: java.lang.Long, username: String) => TwitterAuthor(user_id, username)
+  underlying.getAsOrElse[Long]("tweet_id", throw new IllegalArgumentException("tweet missing id")),
+
+  (underlying.getAs[Long]("user_id"), underlying.getAs[String]("username")) match {
+    case (Some(user_id: Long), Some(username: String)) => TwitterAuthor(user_id, username)
     case _ => throw new IllegalArgumentException("tweet missing user info")
   },
 
-  underlying.get("text") match {
-    case s: String => s
-    case _ => throw new IllegalArgumentException("tweet missing text")
-  },
+  new DateTime(underlying.getAsOrElse[Date]("timestamp", throw new IllegalArgumentException("tweet missing timestamp"))),
 
-  (underlying.get("hashtags") match {
-    case tags: Seq[String] => tags.map(Hashtag).toSet
-    case _ => Set[TwitterReference]()
-  }) ++
-  (underlying.get("references") match {
-    case refs: Seq[String] => refs.map(Reference).toSet
-    case _ => Set[TwitterReference]()
-  })
+  underlying.getAsOrElse[String]("text", throw new IllegalArgumentException("tweet missing text")),
+
+  (underlying.getAsOrElse[MongoDBList]("hashtags", MongoDBList()).map(tag => Hashtag(tag.asInstanceOf[String])) ++
+    underlying.getAsOrElse[MongoDBList]("references", MongoDBList()).map(ref => Reference(ref.asInstanceOf[String]))).toSet
 
 )
 

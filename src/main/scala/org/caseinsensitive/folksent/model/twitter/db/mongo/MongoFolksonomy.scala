@@ -1,9 +1,9 @@
 package org.caseinsensitive.folksent.model.mongo
 
 import org.caseinsensitive.folksent.model._
+import com.mongodb.casbah.Imports._
 import com.mongodb.casbah.MongoDB
 import com.mongodb.casbah.commons.MongoDBObject
-import com.mongodb.DBObject
 import org.caseinsensitive.folksent.model.twitter.TwitterReference
 import org.caseinsensitive.folksent.model.twitter.Hashtag
 import org.caseinsensitive.folksent.model.BaseAuthor
@@ -22,7 +22,7 @@ class MongoFolksonomy(implicit val db: MongoDB) extends FolksonomyReadable[Mongo
     if (sample > 0) {
       cursor = cursor.limit(sample)
     }
-    cursor.map(MongoTweet).toSeq
+    cursor.map(new MongoTweet(_)).toSeq
   }
 
   def topics(): Seq[Topic] = ???
@@ -36,7 +36,7 @@ class MongoFolksonomy(implicit val db: MongoDB) extends FolksonomyReadable[Mongo
   }
 
   def _documentSearch(query: DBObject): Seq[MongoTweet] = {
-    db("tweets").find(MongoDBObject(), query).map(MongoTweet(_)).toSeq
+    db("tweets").find(MongoDBObject(), query).map(new MongoTweet(_)).toSeq
   }
 
   def documents(author: Author): Seq[MongoTweet] = {

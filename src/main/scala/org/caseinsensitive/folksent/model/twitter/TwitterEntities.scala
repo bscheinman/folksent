@@ -1,6 +1,7 @@
 package org.caseinsensitive.folksent.model.twitter
 
 import org.caseinsensitive.folksent.model.{Topic, Document, Author}
+import org.joda.time.DateTime
 
 trait Tweet extends Document {
   val id: Long
@@ -8,17 +9,17 @@ trait Tweet extends Document {
   val name = id.toString
 }
 
-class FullTweet(val id: Long, val author: TwitterAuthor, val text: String, val refs: Set[TwitterReference]) extends Tweet
+case class FullTweet(id: Long, author: TwitterAuthor, timestamp: DateTime, text: String, refs: Set[TwitterReference]) extends Tweet
 
 
 abstract class TwitterReference extends Topic
 
-case class Hashtag(val name: String) extends TwitterReference {
-  override def toString() = s"#${name}"
+case class Hashtag(content: String) extends TwitterReference {
+  val name = s"#${content}"
 }
 
-case class Reference(val name: String) extends TwitterReference {
-  override def toString() = s"@${name}"
+case class Reference(content: String) extends TwitterReference {
+  val name = s"@${content}"
 }
 
 

@@ -2,24 +2,24 @@ package org.caseinsensitive.folksent.model.twitter.db.postgres
 
 import scala.slick.driver.PostgresDriver.simple._
 import org.caseinsensitive.folksent.model.{Document, BaseAuthor}
-import org.caseinsensitive.folksent.model.twitter.{TwitterAuthor, FullTweet}
+import org.caseinsensitive.folksent.model.twitter.TwitterAuthor
+import java.sql.Timestamp
 
 
-case class PGTweet(id: Long, user_id: Long, text: String) extends Document {
+case class PGTweet(id: Long, user_id: Long, timestamp: Option[Timestamp], text: String) extends Document {
   val name = id.toString
   lazy val author = BaseAuthor(user_id.toString)
-  def this(tweet: FullTweet) = {
-    this(tweet.id, tweet.author.id, tweet.text)
-  }
 }
 object Tweets extends Table[PGTweet]("tweets") {
   def tweet_id = column[Long]("tweet_id", O.PrimaryKey)
   def user_id = column[Long]("user_id", O.NotNull)
+  def timestamp = column[Timestamp]("tweet_timestamp", O.Nullable)
   def text = column[String]("text", O.NotNull)
-  def * = tweet_id ~ user_id ~ text <> (PGTweet, PGTweet.unapply _)
+  def * = tweet_id ~ user_id ~ timestamp.? ~ text <> (PGTweet, PGTweet.unapply _)
 
   def user = foreignKey("fk_tweet_user", user_id, Users)(_.user_id)
   def user_index = index("ix_tweet_user", (user_id), unique = false)
+  def timestamp_index = index("ix_tweet_timestamp", (timestamp), unique = false)
 }
 
 
